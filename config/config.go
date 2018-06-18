@@ -11,6 +11,10 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 
+	"crypto/tls"
+	"net/http"
+	"time"
+
 	"github.com/TykTechnologies/tyk/apidef"
 	logger "github.com/TykTechnologies/tyk/log"
 	"github.com/TykTechnologies/tyk/regexp"
@@ -420,4 +424,10 @@ func (c *Config) StoreAnalytics(ip string) bool {
 	}
 
 	return !c.AnalyticsConfig.ignoredIPsCompiled[ip]
+}
+
+func (c *Config) GetConfiguredHttpClient(timeoutInSeconds time.Duration) *http.Client {
+	tr := &http.Transport{TLSClientConfig: &tls.Config{}}
+	tr.TLSClientConfig.InsecureSkipVerify = c.HttpServerOptions.SSLInsecureSkipVerify
+	return &http.Client{Timeout: timeoutInSeconds * time.Second, Transport: tr}
 }

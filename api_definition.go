@@ -254,9 +254,8 @@ func (a APIDefinitionLoader) FromDashboardService(endpoint, secret string) ([]*A
 
 	newRequest.Header.Set("x-tyk-nonce", ServiceNonce)
 
-	c := &http.Client{
-		Timeout: 120 * time.Second,
-	}
+	globalConf := config.Global()
+	c := globalConf.GetConfiguredHttpClient(120)
 	resp, err := c.Do(newRequest)
 	if err != nil {
 		return nil, err

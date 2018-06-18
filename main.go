@@ -1167,16 +1167,18 @@ func listen(listener, controlListener net.Listener, err error) {
 	readTimeout := defReadTimeout
 	writeTimeout := defWriteTimeout
 
+	globalConfig := config.Global()
+
 	targetPort := config.Global().ListenAddress + ":" + strconv.Itoa(config.Global().ListenPort)
-	if config.Global().HttpServerOptions.ReadTimeout > 0 {
+	if globalConfig.HttpServerOptions.ReadTimeout > 0 {
 		readTimeout = time.Duration(config.Global().HttpServerOptions.ReadTimeout) * time.Second
 	}
 
-	if config.Global().HttpServerOptions.WriteTimeout > 0 {
+	if globalConfig.HttpServerOptions.WriteTimeout > 0 {
 		writeTimeout = time.Duration(config.Global().HttpServerOptions.WriteTimeout) * time.Second
 	}
 
-	if config.Global().ControlAPIPort > 0 {
+	if globalConfig.ControlAPIPort > 0 {
 		loadAPIEndpoints(controlRouter)
 	}
 
@@ -1189,8 +1191,8 @@ func listen(listener, controlListener net.Listener, err error) {
 		handleDashboardRegistration()
 
 		// Use a custom server so we can control tves
-		if config.Global().HttpServerOptions.OverrideDefaults {
-			mainRouter.SkipClean(config.Global().HttpServerOptions.SkipURLCleaning)
+		if globalConfig.HttpServerOptions.OverrideDefaults {
+			mainRouter.SkipClean(globalConfig.HttpServerOptions.SkipURLCleaning)
 
 			mainLog.Infof("Custom gateway started (%s)", VERSION)
 

@@ -85,7 +85,8 @@ func (h *HTTPDashboardHandler) Init() error {
 func (h *HTTPDashboardHandler) Register() error {
 	req := h.newRequest(h.RegistrationEndpoint)
 
-	c := &http.Client{Timeout: 5 * time.Second}
+	globalConf := config.Global()
+	c := globalConf.GetConfiguredHttpClient(5)
 	resp, err := c.Do(req)
 
 	if err != nil {
@@ -157,7 +158,8 @@ func (h *HTTPDashboardHandler) sendHeartBeat() error {
 	req.Header.Set("x-tyk-nodeid", NodeID)
 	req.Header.Set("x-tyk-nonce", ServiceNonce)
 
-	c := &http.Client{Timeout: 5 * time.Second}
+	globalConf := config.Global()
+	c := globalConf.GetConfiguredHttpClient(5)
 	resp, err := c.Do(req)
 	if err != nil || resp.StatusCode != 200 {
 		return errors.New("dashboard is down? Heartbeat is failing")
@@ -182,7 +184,8 @@ func (h *HTTPDashboardHandler) DeRegister() error {
 	req.Header.Set("x-tyk-nodeid", NodeID)
 	req.Header.Set("x-tyk-nonce", ServiceNonce)
 
-	c := &http.Client{Timeout: 5 * time.Second}
+	globalConf := config.Global()
+	c := globalConf.GetConfiguredHttpClient(5)
 	resp, err := c.Do(req)
 
 	if err != nil {

@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/Sirupsen/logrus"
 
@@ -80,13 +79,13 @@ func LoadPoliciesFromDashboard(endpoint, secret string, allowExplicit bool) map[
 	log.WithFields(logrus.Fields{
 		"prefix": "policy",
 	}).Info("Mutex lock acquired... calling")
-	c := &http.Client{
-		Timeout: 10 * time.Second,
-	}
 
 	log.WithFields(logrus.Fields{
 		"prefix": "policy",
 	}).Info("Calling dashboard service for policy list")
+
+	globalConf := config.Global()
+	c := globalConf.GetConfiguredHttpClient(10)
 	resp, err := c.Do(newRequest)
 	if err != nil {
 		log.Error("Policy request failed: ", err)
