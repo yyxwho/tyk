@@ -128,7 +128,7 @@ type ExtendedCircuitBreakerMeta struct {
 // flattened URL list is checked for matching paths and then it's status evaluated if found.
 type APISpec struct {
 	*apidef.APIDefinition
-	sync.Mutex
+	sync.RWMutex
 
 	RxPaths                  map[string][]URLSpec
 	WhiteListEnabled         map[string]bool
@@ -151,6 +151,7 @@ type APISpec struct {
 	HTTPTransport            http.RoundTripper
 	HTTPTransportCreated     time.Time
 	GlobalConfig             config.Config
+	OrgHasNoSession          bool
 }
 
 // APIDefinitionLoader will load an Api definition from a storage
