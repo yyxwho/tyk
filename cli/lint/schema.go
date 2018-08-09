@@ -746,6 +746,12 @@ const confSchema = `{
 	},
 	"regexp_cache_expire": {
 		"type": "integer"
+	},
+	"distributed_quota_enabled": {
+		"type": "boolean"
+	},
+	"distributed_quota_sync_frequency": {
+		"type": "integer"
 	}
 }
 }`

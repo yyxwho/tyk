@@ -25,6 +25,7 @@ import (
 type InboundData struct {
 	KeyName      string
 	Value        string
+	IntValue     int64
 	SessionState string
 	Timeout      int64
 	Per          int64
@@ -550,6 +551,40 @@ func (r *RPCStorageHandler) IncrememntWithExpire(keyName string, expire int64) i
 
 	return val.(int64)
 
+}
+
+// IncrementByWithExpire increments given key by value in Redis
+// and sets expiration if it is a new key
+func (r *RPCStorageHandler) IncrementByWithExpire(keyName string, incBy int64, expire int64) int64 {
+	ibd := InboundData{
+		KeyName:  keyName,
+		IntValue: incBy,
+		Expire:   expire,
+	}
+
+	val, err := RPCFuncClientSingleton.CallTimeout("IncrementByWithExpire", ibd, GlobalRPCCallTimeout)
+	if err != nil {
+		emitRPCErrorEventKv(
+			rpcFuncClientSingletonCall,
+			"IncrementByWithExpire",
+			err,
+			map[string]string{
+				"keyName": keyName,
+			},
+		)
+	}
+	if r.IsAccessError(err) {
+		if r.Login() {
+			return r.IncrementByWithExpire(keyName, incBy, expire)
+		}
+	}
+
+	if val == nil {
+		log.Warning("RPC IncrementByWithExpire returned nil value, returning 0")
+		return 0
+	}
+
+	return val.(int64)
 }
 
 // GetKeys will return all keys according to the filter (filter is a prefix - e.g. tyk.keys.*)
@@ -1138,6 +1173,10 @@ func getDispatcher() *gorpc.Dispatcher {
 
 	dispatch.AddFunc("Ping", func() bool {
 		return false
+	})
+
+	dispatch.AddFunc("IncrementByWithExpire", func(ibd *InboundData) (int64, error) {
+		return 0, nil
 	})
 
 	return dispatch

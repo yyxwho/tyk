@@ -291,6 +291,8 @@ type Config struct {
 	MinTokenLength                    int                                   `json:"min_token_length"`
 	DisableRegexpCache                bool                                  `json:"disable_regexp_cache"`
 	RegexpCacheExpire                 int32                                 `json:"regexp_cache_expire"`
+	DistributedQuotaEnabled           bool                                  `json:"distributed_quota_enabled"`
+	DistributedQuotaSyncFrequency     int32                                 `json:"distributed_quota_sync_frequency"`
 }
 
 type CertData struct {

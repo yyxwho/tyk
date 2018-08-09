@@ -7,7 +7,9 @@ import (
 	"github.com/TykTechnologies/tyk/request"
 )
 
-var sessionLimiter = SessionLimiter{}
+var sessionLimiter = SessionLimiter{
+	keyQuotas: map[string]keyQuota{},
+}
 var sessionMonitor = Monitor{}
 
 // RateLimitAndQuotaCheck will check the incomming request and key whether it is within it's quota and
